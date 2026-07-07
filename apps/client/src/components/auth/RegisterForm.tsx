@@ -1,7 +1,10 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../../styles/register.css";
 
 function RegisterForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,6 +18,9 @@ function RegisterForm() {
     password: "",
     confirmPassword: "",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverMessage, setServerMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -60,16 +66,33 @@ function RegisterForm() {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerMessage("");
 
-    if (validate()) {
-      alert("Registration form submitted successfully!");
+    if (!validate()) {
+      return;
+    }
 
-      console.log(formData);
+    setIsSubmitting(true);
 
-      // Later:
-      // axios.post("/api/auth/register", formData)
+    try {
+      const response = await axios.post("http://localhost:3001/api/auth/register", {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+
+      setServerMessage(response.data.message);
+      navigate("/dashboard", { state: { userName: response.data.user.name } });
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        setErrors((prev) => ({ ...prev, email: error.response?.data.message }));
+      } else {
+        setErrors((prev) => ({ ...prev, email: "Registration failed. Please try again." }));
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,7 +143,11 @@ function RegisterForm() {
         />
         <span>{errors.confirmPassword}</span>
 
-        <button type="submit">Register</button>
+        {serverMessage && <p className="success-message">{serverMessage}</p>}
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creating account..." : "Register"}
+        </button>
 
         <p className="login-text">
           Already have an account? <a href="#">Login</a>
