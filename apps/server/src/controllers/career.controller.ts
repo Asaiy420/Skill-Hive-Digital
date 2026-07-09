@@ -18,7 +18,8 @@ export const searchCareers = async (
       filter.category = category;
     }
 
-    let sortOption: Record<string, 1 | -1> = { title: 1 };
+    type SortValue = 1 | -1 | { $meta: 'textScore' };
+    let sortOption: Record<string, SortValue> = { title: 1 };
     if (sort === 'salary_high') {
       sortOption = { averageSalary: -1 };
     } else if (sort === 'salary_low') {
@@ -30,7 +31,10 @@ export const searchCareers = async (
     }
 
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10) || 12));
+    const limitNum = Math.min(
+      50,
+      Math.max(1, parseInt(limit as string, 10) || 12)
+    );
     const skip = (pageNum - 1) * limitNum;
 
     let query = Career.find(filter);
