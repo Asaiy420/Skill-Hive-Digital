@@ -87,6 +87,12 @@ function RegisterForm() {
         password: formData.password,
       });
 
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
+
       setServerMessage(response.data.message);
       navigate("/dashboard", { state: { userName: response.data.user.name } });
     } catch (error: unknown) {
