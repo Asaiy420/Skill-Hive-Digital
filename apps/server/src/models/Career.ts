@@ -13,7 +13,7 @@ const CareerAssessmentSchema = new Schema<ICareerAssessment>({
     trim: true,
   },
   questions: {
-    type: [Schema.Types.Mixed],
+    type: [Schema.Types.Mixed as any],
     required: true,
     default: [],
   },

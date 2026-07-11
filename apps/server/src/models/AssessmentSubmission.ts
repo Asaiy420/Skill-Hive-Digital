@@ -21,7 +21,7 @@ const AssessmentSubmissionSchema = new Schema<IAssessmentSubmission>({
     required: true,
   },
   answers: {
-    type: [Schema.Types.Mixed],
+    type: [Schema.Types.Mixed as any],
     required: true,
     default: [],
   },
