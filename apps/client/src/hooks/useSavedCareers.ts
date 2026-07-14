@@ -1,62 +1,41 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  fetchDashboardSavedCareers,
-  fetchSavedCareers,
-  removeSavedCareer,
-  saveCareer,
-} from "../api";
-import type {
-  Career,
-  DashboardSavedCareersSummary,
-  SavedCareerRecord,
-} from "../types";
+import { useCallback, useEffect, useState } from "react";
+import { fetchSavedCareers, removeSavedCareer, saveCareer } from "../api";
+import type { Career, SavedCareerRecord } from "../types";
 
 export function useSavedCareers() {
   const [savedCareers, setSavedCareers] = useState<SavedCareerRecord[]>([]);
-  const [dashboard, setDashboard] =
-    useState<DashboardSavedCareersSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("career-token")
-      : null;
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const refresh = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const [saved, summary] = await Promise.all([
-        fetchSavedCareers(),
-        fetchDashboardSavedCareers(),
-      ]);
-
-      setSavedCareers(saved);
-      setDashboard(summary);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load saved careers"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
     if (!token) {
       setSavedCareers([]);
-      setDashboard(null);
       setLoading(false);
       return;
     }
 
+    setLoading(true);
+    setError(null);
+
+    try {
+      const saved = await fetchSavedCareers();
+      setSavedCareers(saved);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Unable to load saved careers"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
     void refresh();
-  }, [refresh, token]);
+  }, [refresh]);
 
   const isSaved = useCallback(
     (careerId: string) =>
@@ -67,11 +46,11 @@ export function useSavedCareers() {
   const toggleSave = useCallback(
     async (career: Career) => {
       try {
-        if (isSaved(career.id)) {
-          await removeSavedCareer(career.id);
+        if (isSaved(career._id)) {
+          await removeSavedCareer(career._id);
           setStatusMessage(`${career.title} removed from saved careers`);
         } else {
-          await saveCareer(career.id);
+          await saveCareer(career._id);
           setStatusMessage(`${career.title} saved to your list`);
         }
 
@@ -95,24 +74,18 @@ export function useSavedCareers() {
         await refresh();
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Unable to remove saved career"
+          err instanceof Error ? err.message : "Unable to remove saved career"
         );
       }
     },
     [refresh]
   );
 
-  const recent = useMemo(
-    () => savedCareers.slice(0, 3),
-    [savedCareers]
-  );
+  const recent = savedCareers.slice(0, 3);
 
   return {
     savedCareers,
     recent,
-    dashboard,
     loading,
     error,
     statusMessage,
