@@ -1,28 +1,25 @@
 export type Career = {
-  id: string
-  title: string
-  category: string
-  description: string
-  salary: string
-  skills: string[]
-  image?: string
-}
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  requiredSkills: string[];
+  educationRequired: string;
+  averageSalary: string;
+  growthOutlook: string;
+  workEnvironment: string;
+};
 
 export type SavedCareerRecord = {
-  id: string
-  studentId: string
-  careerId: string
-  createdAt: string
-  career?: Career
-}
-
-export type DashboardSavedCareersSummary = {
-  count: number
-  recent: SavedCareerRecord[]
-}
+  _id: string;
+  userId: string;
+  careerId: string;
+  savedAt: string;
+  career: Career;
+};
 
 export type AuthUser = {
-  id: string
-  name: string
-  email: string
-}
+  id: string;
+  name: string;
+  email: string;
+};

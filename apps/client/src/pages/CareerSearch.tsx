@@ -1,17 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-
-interface Career {
-  _id: string;
-  title: string;
-  description: string;
-  category: string;
-  requiredSkills: string[];
-  educationRequired: string;
-  averageSalary: string;
-  growthOutlook: string;
-  workEnvironment: string;
-}
+import type { Career } from '../types';
+import { useSavedCareers } from '../hooks/useSavedCareers';
+import { SaveCareerButton } from '../components/SaveCareerButton';
 
 interface Suggestion {
   _id: string;
@@ -41,6 +32,8 @@ export default function CareerSearch() {
   const [page, setPage] = useState(1);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const { isSaved, toggleSave, statusMessage, clearStatus } = useSavedCareers();
 
   useEffect(() => {
     axios
@@ -217,6 +210,15 @@ export default function CareerSearch() {
           </div>
         </div>
 
+        {statusMessage && (
+          <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+            <span>{statusMessage}</span>
+            <button onClick={clearStatus} className="font-semibold hover:opacity-70">
+              &times;
+            </button>
+          </div>
+        )}
+
         {category && (
           <div className="flex items-center gap-2 mb-4">
             <span className="text-sm text-[var(--text)]">Active filter:</span>
@@ -249,20 +251,27 @@ export default function CareerSearch() {
                   key={career._id}
                   className="border border-[var(--border)] rounded-xl p-5 hover:shadow-md transition-shadow bg-[var(--bg)] flex flex-col"
                 >
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-start justify-between mb-2 gap-2">
                     <h3 className="text-lg font-medium text-[var(--text-h)]">
                       {career.title}
                     </h3>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${growthBadge(career.growthOutlook)}`}
+                      className={`text-xs px-2 py-0.5 rounded-full whitespace-nowrap ${growthBadge(career.growthOutlook)}`}
                     >
                       {career.growthOutlook}
                     </span>
                   </div>
 
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent)] self-start mb-3">
-                    {career.category}
-                  </span>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent-bg)] text-[var(--accent)] self-start">
+                      {career.category}
+                    </span>
+                    <SaveCareerButton
+                      career={career}
+                      isSaved={isSaved(career._id)}
+                      onToggle={toggleSave}
+                    />
+                  </div>
 
                   <p className="text-sm text-[var(--text)] mb-3 line-clamp-2">
                     {career.description}

@@ -12,6 +12,7 @@ export function SaveCareerButton({ career, isSaved, loading = false, onToggle }:
     <button
       type="button"
       onClick={() => void onToggle(career)}
+      disabled={loading}
       aria-label={isSaved ? `Remove ${career.title} from saved careers` : `Save ${career.title} to saved careers`}
       className={`inline-flex items-center justify-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition ${
         isSaved
