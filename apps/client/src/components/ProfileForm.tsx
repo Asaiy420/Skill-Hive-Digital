@@ -33,7 +33,11 @@ export default function ProfileForm({
     }
   }, [onProfileChange]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const handleChange = (
+  e: React.ChangeEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >
+) => {
     const updatedProfile = {
       ...profile,
       [e.target.name]: e.target.value,
@@ -146,13 +150,17 @@ if (!/^\d{10}$/.test(profile.phone)) {
 
         <div className="form-group">
           <label>Degree</label>
-          <input
-            type="text"
-            name="degree"
-            value={profile.degree}
-            onChange={handleChange}
-            placeholder="Bachelor, Master, etc."
-          />
+         <select
+  name="degree"
+  value={profile.degree}
+  onChange={handleChange}
+>
+  <option value="">Select Degree</option>
+  <option value="Bachelor's">Bachelor's</option>
+  <option value="Master's">Master's</option>
+  <option value="PhD">PhD</option>
+  <option value="Diploma">Diploma</option>
+</select>
         </div>
 
         <div className="form-group">
@@ -185,24 +193,24 @@ if (!/^\d{10}$/.test(profile.phone)) {
 
         <div className="form-group">
           <label>Skills</label>
-          <input
-            type="text"
-            name="skills"
-            value={profile.skills}
-            onChange={handleChange}
-            placeholder="React, Java, Python..."
-          />
+         <textarea
+  name="skills"
+  value={profile.skills}
+  onChange={handleChange}
+  placeholder="List your technical and soft skills..."
+  rows={4}
+/>
         </div>
 
         <div className="form-group">
           <label>Career Goal</label>
-          <input
-            type="text"
-            name="careerGoal"
-            value={profile.careerGoal}
-            onChange={handleChange}
-            placeholder="Software Engineer"
-          />
+          <textarea
+  name="careerGoal"
+  value={profile.careerGoal}
+  onChange={handleChange}
+  placeholder="Describe your career goals..."
+  rows={4}
+/>
         </div>
 
         <div className="form-group">
