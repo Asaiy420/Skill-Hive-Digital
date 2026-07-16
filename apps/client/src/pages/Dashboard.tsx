@@ -3,7 +3,7 @@ import { DashboardSavedCareersWidget } from '../components/DashboardSavedCareers
 import { SaveCareerButton } from '../components/SaveCareerButton';
 import { useSavedCareers } from '../hooks/useSavedCareers';
 import type { Career } from '../types';
-import '../styles/Dashboard.css';
+import '../styles/dashboard.css';
 
 type DashboardMetric = {
   label: string;
@@ -237,7 +237,13 @@ function Dashboard() {
                       </p>
                     </div>
                     <Link
-                      to={index === 2 ? '/login' : '/careers'}
+                      to={
+                        index === 0
+                          ? '/assessment'
+                          : index === 2
+                            ? '/login'
+                            : '/careers'
+                      }
                       className='dashboard-task-item__link'
                     >
                       Start
@@ -345,7 +351,7 @@ function Dashboard() {
           </div>
 
           <Link
-            to='/careers'
+            to='/assessment'
             className='dashboard-button dashboard-button--cta'
           >
             Take Career Assessment

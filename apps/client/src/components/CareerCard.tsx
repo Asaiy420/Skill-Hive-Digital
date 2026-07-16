@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { SaveCareerButton } from './SaveCareerButton'
 import type { Career } from '../types'
 
@@ -28,7 +29,9 @@ export function CareerCard({ career, isSaved, onToggleSave }: CareerCardProps) {
         </div>
         <div className="flex items-center justify-between text-sm text-slate-600">
           <span>Salary: {career.averageSalary}</span>
-          <span>{career.growthOutlook}</span>
+          <Link to={`/careers/${career._id}`} className="font-semibold text-sky-600 hover:text-sky-700">
+            View details
+          </Link>
         </div>
       </div>
     </article>
