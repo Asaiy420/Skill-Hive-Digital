@@ -5,12 +5,25 @@ import {
   getCategories,
   getCareerById,
 } from '../controllers/career.controller';
+import {
+  saveCareer,
+  unsaveCareer,
+  getSavedCareers,
+} from '../controllers/savedCareer.controller';
+import { authMiddleware } from '../middleware/middleware';
 
 const router: Router = Router();
 
 router.get('/search', searchCareers);
 router.get('/suggestions', getSuggestions);
 router.get('/categories', getCategories);
+
+// Saved-careers routes must come before the '/:id' route below,
+// otherwise Express would treat "saved" as an :id value.
+router.get('/saved', authMiddleware, getSavedCareers);
+router.post('/saved', authMiddleware, saveCareer);
+router.delete('/saved/:careerId', authMiddleware, unsaveCareer);
+
 router.get('/:id', getCareerById);
 
 export default router;

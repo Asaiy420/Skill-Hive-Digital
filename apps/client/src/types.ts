@@ -65,4 +65,3 @@ export type DashboardSavedCareersSummary = {
   recent: SavedCareerRecord[];
   count: number;
 };
-

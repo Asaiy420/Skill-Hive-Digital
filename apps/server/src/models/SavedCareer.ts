@@ -1,15 +1,15 @@
 import { Schema, model, Document, Types } from "mongoose";
 
 export interface ISavedCareer extends Document {
-  studentId: Types.ObjectId;
+  userId: Types.ObjectId;
   careerId: Types.ObjectId;
   savedAt: Date;
 }
 
 const SavedCareerSchema = new Schema<ISavedCareer>({
-  studentId: {
+  userId: {
     type: Schema.Types.ObjectId,
-    ref: "Student",
+    ref: "User",
     required: true,
   },
   careerId: {
@@ -24,7 +24,7 @@ const SavedCareerSchema = new Schema<ISavedCareer>({
 });
 
 SavedCareerSchema.index(
-  { studentId: 1, careerId: 1 },
+  { userId: 1, careerId: 1 },
   { unique: true }
 );
 

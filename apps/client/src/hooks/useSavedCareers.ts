@@ -1,14 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  fetchSavedCareers,
-  removeSavedCareer,
-  saveCareer,
-} from "../api";
-import type {
-  Career,
-  DashboardSavedCareersSummary,
-  SavedCareerRecord,
-} from "../types";
+import { useCallback, useEffect, useState } from "react";
+import { fetchSavedCareers, removeSavedCareer, saveCareer } from "../api";
+import type { Career, SavedCareerRecord } from "../types";
 
 export function useSavedCareers() {
   const [savedCareers, setSavedCareers] = useState<SavedCareerRecord[]>([]);
@@ -17,11 +9,15 @@ export function useSavedCareers() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("token")
-      : null;
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const refresh = useCallback(async () => {
+    if (!token) {
+      setSavedCareers([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -30,24 +26,16 @@ export function useSavedCareers() {
       setSavedCareers(saved);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to load saved careers"
+        err instanceof Error ? err.message : "Unable to load saved careers"
       );
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
-    if (!token) {
-      setSavedCareers([]);
-      setLoading(false);
-      return;
-    }
-
     void refresh();
-  }, [refresh, token]);
+  }, [refresh]);
 
   const isSaved = useCallback(
     (careerId: string) =>
@@ -86,32 +74,18 @@ export function useSavedCareers() {
         await refresh();
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Unable to remove saved career"
+          err instanceof Error ? err.message : "Unable to remove saved career"
         );
       }
     },
     [refresh]
   );
 
-  const recent = useMemo(
-    () => savedCareers.slice(0, 3),
-    [savedCareers]
-  );
-
-  const dashboard: DashboardSavedCareersSummary | null = useMemo(
-    () =>
-      savedCareers.length
-        ? { recent, count: savedCareers.length }
-        : { recent: [], count: 0 },
-    [recent, savedCareers.length]
-  );
+  const recent = savedCareers.slice(0, 3);
 
   return {
     savedCareers,
     recent,
-    dashboard,
     loading,
     error,
     statusMessage,

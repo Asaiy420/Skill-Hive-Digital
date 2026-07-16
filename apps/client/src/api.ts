@@ -61,5 +61,4 @@ export async function fetchLatestRecommendations() {
   const response = await api.get<RecommendationsResponse>('/assessments/recommendations')
   return response.data
 }
-
 export default api
