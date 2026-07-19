@@ -8,7 +8,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 
 function App() {
-  return (
+  return ( 
     <Routes>
       <Route path='/' element={<LandingPage />} />
       <Route path='/register' element={<Register />} />
