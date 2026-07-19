@@ -11,7 +11,7 @@ import Assessment from './pages/Assessment';
 import Recommendations from './pages/Recommendations';
 
 function App() {
-  return (
+  return ( 
     <Routes>
       <Route path='/' element={<LandingPage />} />
       <Route path='/register' element={<Register />} />
